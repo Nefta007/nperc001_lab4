@@ -3,6 +3,9 @@
 #include <util/delay.h>
 #include "timerISR.h"
 
+unsigned char reseter;
+unsigned char increment;
+unsigned char i;
 
 unsigned char SetBit(unsigned char x, unsigned char k, unsigned char b) {
    return (b ?  (x | (0x01 << k))  :  (x & ~(0x01 << k)) );
@@ -67,15 +70,29 @@ void Tick() {
   switch(state) {
 
     case INIT:
+    state = idle_state;
+    i = 0;
       break;
 
     case idle_state:
+    if(A1){
+      state = increase;
+    }
+    else if(A1){
+      state = decrease;
+    }
+    else if(A2){
+      state = INIT;
+    }
+
       break;
 
     case increase:
+    state = idle_state;
       break;
 
     case decrease:
+    state = idle_state;
       break;
 
 
@@ -116,6 +133,8 @@ int main(void)
 
 
   ADC_init();//initializes the analog to digital converter
+  increment = ADC_read(0);
+  reseter = ADC_read(2);
 	
   state = INIT;
 
