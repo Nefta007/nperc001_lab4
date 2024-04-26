@@ -135,7 +135,7 @@ int main(void)
   ADC_init();//initializes the analog to digital converter
   increment = ADC_read(0);
   reseter = ADC_read(2);
-	
+	//add code to check for values for up and down as well as left and right for next parts of lab
   state = INIT;
 
   TimerSet(1); //period of 1 ms. good period for the stepper mottor
