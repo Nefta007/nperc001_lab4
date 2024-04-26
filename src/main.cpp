@@ -71,12 +71,12 @@ void Tick() {
   switch(state) {
 
     case INIT:
-    state = idle_state;
     i = 0;
+    state = idle_state;
       break;
 
     case idle_state:
-    if(ADC_read(1) >=120 || ADC_read(1) <= 123){
+    if(ADC_read(1) >=1020 || ADC_read(1) <= 1023){
       state = increase;
     }
     else if(ADC_read(1) >=0 || ADC_read(1) <=3 ){
@@ -88,7 +88,7 @@ void Tick() {
       break;
       
     case increase:
-    if(ADC_read(1) < 120){
+    if(ADC_read(1) < 1020){
       state = idle_state;
     }
       break;
