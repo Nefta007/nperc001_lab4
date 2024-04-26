@@ -6,7 +6,7 @@
 // unsigned char reseter;
 //int increment = ADC_read(0);
 int button = PINC;
-int i;
+unsigned char i;
 
 unsigned char SetBit(unsigned char x, unsigned char k, unsigned char b) {
    return (b ?  (x | (0x01 << k))  :  (x & ~(0x01 << k)) );
@@ -119,22 +119,22 @@ void Tick() {
     case increase:
     if(i <=15){
       i++;
-      outNum(i);
+      //outNum(i);
     }
     else{
       i = 0;
-      outNum(i);
+     // outNum(i);
     }
       break;
 
     case decrease:
     if(i >=0){
       i--;
-      outNum(i);
+      //outNum(i);
     }
     else{
       i = 15;
-      outNum(i);
+      //outNum(i);
     }
       break;
 
