@@ -6,7 +6,7 @@
 // unsigned char reseter;
 //int increment = ADC_read(0);
 int button = PINC;
-unsigned char i;
+int i;
 
 unsigned char SetBit(unsigned char x, unsigned char k, unsigned char b) {
    return (b ?  (x | (0x01 << k))  :  (x & ~(0x01 << k)) );
@@ -51,15 +51,15 @@ void outNum(int num){
   PORTB = SetBit(PORTB, 0 ,nums[num]&0x01); // assigns bit 0 of nums(g) to pin 0 of port b
 }
 
-//directions[] and outDir() will be neeeded for ex 2 and 3
-int directions[4] = { }; //TODO: copmlete the array containg the values needed for the 7 sgements for each of the 4 directions
-// a  b  c  d  e  f  g
-//TODO: display the direction to the 7-seg display. HINT: will be very similar to outNum()
-void outDir(int dir){
+// //directions[] and outDir() will be neeeded for ex 2 and 3
+// int directions[4] = { }; //TODO: copmlete the array containg the values needed for the 7 sgements for each of the 4 directions
+// // a  b  c  d  e  f  g
+// //TODO: display the direction to the 7-seg display. HINT: will be very similar to outNum()
+// void outDir(int dir){
   
-}
+// }
 
-int phases[8] = {0b0001, 0b0011, 0b0010, 0b0110, 0b0100, 0b1100, 0b1000, 0b1001}; //8 phases of the stepper motor step
+// int phases[8] = {0b0001, 0b0011, 0b0010, 0b0110, 0b0100, 0b1100, 0b1000, 0b1001}; //8 phases of the stepper motor step
 
 enum states {INIT, idle_state, increase, decrease} state; //TODO: finish the enum for the SM
 
@@ -94,14 +94,14 @@ void Tick() {
       break;
 
     case decrease:
-    if(ADC_read(1) >3){
+    if(ADC_read(1) > 3){
       state = idle_state;
     }
       break;
 
-    default:
-      state = INIT;
-      break;
+    // default:
+    //   state = INIT;
+    //   break;
 
   }
 
@@ -138,8 +138,8 @@ void Tick() {
     }
       break;
 
-    default:
-      break;
+    // default:
+    //   break;
 
   }
 
