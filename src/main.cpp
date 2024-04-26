@@ -57,7 +57,7 @@ void outDir(int dir){
 
 int phases[8] = {0b0001, 0b0011, 0b0010, 0b0110, 0b0100, 0b1100, 0b1000, 0b1001}; //8 phases of the stepper motor step
 
-enum states {INIT, } state; //TODO: finish the enum for the SM
+enum states {INIT, idle_state, increase, decrease} state; //TODO: finish the enum for the SM
 
 
 void Tick() {
@@ -68,6 +68,16 @@ void Tick() {
 
     case INIT:
       break;
+
+    case idle_state:
+      break;
+
+    case increase:
+      break;
+
+    case decrease:
+      break;
+
 
     default:
       state = INIT;
@@ -80,6 +90,15 @@ void Tick() {
   switch(state) {
 
     case INIT:
+      break;
+
+    case idle_state:
+      break;
+
+    case increase:
+      break;
+
+    case decrease:
       break;
 
     default:
