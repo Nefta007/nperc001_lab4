@@ -3,9 +3,10 @@
 #include <util/delay.h>
 #include "timerISR.h"
 
-unsigned char reseter;
-unsigned char increment;
-unsigned char i;
+// unsigned char reseter;
+//int increment = ADC_read(0);
+int button = PINC;
+int i;
 
 unsigned char SetBit(unsigned char x, unsigned char k, unsigned char b) {
    return (b ?  (x | (0x01 << k))  :  (x & ~(0x01 << k)) );
@@ -75,26 +76,28 @@ void Tick() {
       break;
 
     case idle_state:
-    if(A1){
+    if(ADC_read(1) >=120 || ADC_read(1) <= 123){
       state = increase;
     }
-    else if(A1){
+    else if(ADC_read(1) >=0 || ADC_read(1) <=3 ){
       state = decrease;
     }
-    else if(A2){
+    else if(button == 0){
       state = INIT;
     }
-
       break;
-
+      
     case increase:
-    state = idle_state;
+    if(ADC_read(1) < 120){
+      state = idle_state;
+    }
       break;
 
     case decrease:
-    state = idle_state;
+    if(ADC_read(1) >3){
+      state = idle_state;
+    }
       break;
-
 
     default:
       state = INIT;
@@ -110,12 +113,29 @@ void Tick() {
       break;
 
     case idle_state:
+    outNum(i);
       break;
 
     case increase:
+    if(i <=15){
+      i++;
+      outNum(i);
+    }
+    else{
+      i = 0;
+      outNum(i);
+    }
       break;
 
     case decrease:
+    if(i >=0){
+      i--;
+      outNum(i);
+    }
+    else{
+      i = 15;
+      outNum(i);
+    }
       break;
 
     default:
@@ -130,11 +150,14 @@ void Tick() {
 int main(void)
 {
 	//TODO: initialize all outputs and inputs
-
+  // To set a pin as Output: DDR = 1, PORT = 0
+  // For Input: DDR = 0, PORT = 1
+  DDRC = 0b000111; PORTC = 0b111000;
+  DDRB = 0b111111; PORTB = 0b000000;
+  DDRD = 0b1111111; PORTD = 0b0000000;
 
   ADC_init();//initializes the analog to digital converter
-  increment = ADC_read(0);
-  reseter = ADC_read(2);
+ 
 	//add code to check for values for up and down as well as left and right for next parts of lab
   state = INIT;
 
@@ -152,3 +175,39 @@ int main(void)
 
     return 0;
 }
+
+// int main(void)
+// {
+
+//   DDRB = 0xFF; PORTB = 0x00; //sets all of port b as outputs even though we are only using pins 2-5(digital pins 10-13)(stepper motor)
+
+//   DDRC = 0x00; PORTC = 0xFF; //sets all of port c as inputs even though we are only using pin 2(A2)(joystick button)
+
+//   int i = 0;
+
+
+
+
+//   while (1)
+//   {
+//      if((PINC >> 2) & 0x01){//button not pressed
+//          PORTB = (PORTB & 0x03) | phases[i] << 2;//& first to reset pins 2-5 but not 0-1 then | with phase shifted left 2 to assign the right value to pins 2-5
+//          i++;//increment to next phase
+//          if(i>7){ //if all phases are completed, restart
+//             i = 0;
+//          }
+//      }else{
+//          PORTB = (PORTB & 0x03) | phases[i] << 2;
+//          i--;
+//          if(i<0){
+//              i = 7;
+//          }
+
+//      }
+//      _delay_ms(1);//time to wait in each phase. NO NOT USE THIS IN SYNCH STATE MACHINES. USE THE PERIOD OF THE SM INSTEAD
+//    }
+
+
+//    return 0;
+
+// }
