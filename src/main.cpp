@@ -2,11 +2,14 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "timerISR.h"
+#include "serialATmega.h"
 
 // unsigned char reseter;
 //int increment = ADC_read(0);
-int button = PINC;
+//int button = PINC;
 int i;
+int j;
+int counter;
 
 unsigned char SetBit(unsigned char x, unsigned char k, unsigned char b) {
    return (b ?  (x | (0x01 << k))  :  (x & ~(0x01 << k)) );
@@ -63,7 +66,6 @@ void outNum(int num){
 
 enum states {INIT, idle_state, increase, decrease} state; //TODO: finish the enum for the SM
 
-
 void Tick() {
 
   // State Transistions
@@ -71,32 +73,40 @@ void Tick() {
   switch(state) {
 
     case INIT:
-    i = 0;
+    counter = i; 
     state = idle_state;
       break;
 
     case idle_state:
-    if(ADC_read(1) >=1020 || ADC_read(1) <= 1023){
+    if(ADC_read(0) >= 800){ 
+      i++;
       state = increase;
     }
-    else if(ADC_read(1) >=0 || ADC_read(1) <=3 ){
+    else if(ADC_read(0) <= 200 ){
+      // i = counter;
+      i--;
       state = decrease;
     }
-    else if(button == 0){
+    else if(PINC == 0){
       state = INIT;
+    }
+    else{
+      state = idle_state;
     }
       break;
       
-    case increase:
-    if(ADC_read(1) < 1020){
+    case increase: 
+    if(ADC_read(0) < 800){
+      counter = i;
       state = idle_state;
     }
       break;
 
     case decrease:
-    if(ADC_read(1) > 3){
+    if(ADC_read(0) > 200){
+      counter = i;
       state = idle_state;
-    }
+   }
       break;
 
     // default:
@@ -110,33 +120,24 @@ void Tick() {
   switch(state) {
 
     case INIT:
+    i = 0;
       break;
 
     case idle_state:
     outNum(i);
       break;
 
-    case increase:
-    if(i <=15){
-      i++;
-      //outNum(i);
-    }
-    else{
+    case increase: 
+    if(i > 15){
       i = 0;
-     // outNum(i);
     }
       break;
 
     case decrease:
-    if(i >=0){
-      i--;
-      //outNum(i);
-    }
-    else{
+    if(i < 0){
       i = 15;
-      //outNum(i);
     }
-      break;
+     break;
 
     // default:
     //   break;
@@ -150,24 +151,27 @@ void Tick() {
 int main(void)
 {
 	//TODO: initialize all outputs and inputs
-  // To set a pin as Output: DDR = 1, PORT = 0
-  // For Input: DDR = 0, PORT = 1
-  DDRC = 0b000111; PORTC = 0b111000;
+  //  Output: DDR = 1, PORT = 0
+  //  Input: DDR = 0, PORT = 1
+  DDRC = 0b111000; PORTC = 0b000111;
   DDRB = 0b111111; PORTB = 0b000000;
-  DDRD = 0b1111111; PORTD = 0b0000000;
+  DDRD = 0b11111111; PORTD = 0b00000000;
 
   ADC_init();//initializes the analog to digital converter
+  // ADC_read(1);
  
 	//add code to check for values for up and down as well as left and right for next parts of lab
   state = INIT;
 
+// serial_init(9600);
   TimerSet(1); //period of 1 ms. good period for the stepper mottor
   TimerOn();
 
 
-    while (1)
+    while(1)
     {
-
+      //outNum(1);
+serial_println(ADC_read(0));
 		  Tick();      // Execute one synchSM tick
       while (!TimerFlag){}  // Wait for SM period
       TimerFlag = 0;        // Lower flag
@@ -184,7 +188,7 @@ int main(void)
 //   DDRC = 0x00; PORTC = 0xFF; //sets all of port c as inputs even though we are only using pin 2(A2)(joystick button)
 
 //   int i = 0;
-
+                                                                                                                                                                                                                                                    
 
 
 
