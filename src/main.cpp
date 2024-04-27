@@ -4,9 +4,7 @@
 #include "timerISR.h"
 #include "serialATmega.h"
 
-// unsigned char reseter;
-//int increment = ADC_read(0);
-//int button = PINC;
+
 int i;
 int j;
 int counter;
