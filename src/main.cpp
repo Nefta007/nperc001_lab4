@@ -69,7 +69,6 @@ enum states {INIT, idle_state, increase, decrease} state; //TODO: finish the enu
 void Tick() {
 
   // State Transistions
-  //TODO: complete transitions 
   switch(state) {
 
     case INIT:
@@ -83,12 +82,12 @@ void Tick() {
       state = increase;
     }
     else if(ADC_read(0) <= 200 ){
-      // i = counter;
       i--;
       state = decrease;
     }
-    else if(PINC == 0){
-      state = INIT;
+    else if(!((PINC >> 2) & 0x01)){
+      i = 0;
+      state = idle_state;
     }
     else{
       state = idle_state;
@@ -109,14 +108,11 @@ void Tick() {
    }
       break;
 
-    // default:
-    //   state = INIT;
-    //   break;
+
 
   }
 
   // State Actions
-  //TODO: complete transitions
   switch(state) {
 
     case INIT:
@@ -139,8 +135,6 @@ void Tick() {
     }
      break;
 
-    // default:
-    //   break;
 
   }
 
@@ -158,8 +152,7 @@ int main(void)
   DDRD = 0b11111111; PORTD = 0b00000000;
 
   ADC_init();//initializes the analog to digital converter
-  // ADC_read(1);
- 
+
 	//add code to check for values for up and down as well as left and right for next parts of lab
   state = INIT;
 
@@ -179,39 +172,3 @@ serial_println(ADC_read(0));
 
     return 0;
 }
-
-// int main(void)
-// {
-
-//   DDRB = 0xFF; PORTB = 0x00; //sets all of port b as outputs even though we are only using pins 2-5(digital pins 10-13)(stepper motor)
-
-//   DDRC = 0x00; PORTC = 0xFF; //sets all of port c as inputs even though we are only using pin 2(A2)(joystick button)
-
-//   int i = 0;
-                                                                                                                                                                                                                                                    
-
-
-
-//   while (1)
-//   {
-//      if((PINC >> 2) & 0x01){//button not pressed
-//          PORTB = (PORTB & 0x03) | phases[i] << 2;//& first to reset pins 2-5 but not 0-1 then | with phase shifted left 2 to assign the right value to pins 2-5
-//          i++;//increment to next phase
-//          if(i>7){ //if all phases are completed, restart
-//             i = 0;
-//          }
-//      }else{
-//          PORTB = (PORTB & 0x03) | phases[i] << 2;
-//          i--;
-//          if(i<0){
-//              i = 7;
-//          }
-
-//      }
-//      _delay_ms(1);//time to wait in each phase. NO NOT USE THIS IN SYNCH STATE MACHINES. USE THE PERIOD OF THE SM INSTEAD
-//    }
-
-
-//    return 0;
-
-// }
